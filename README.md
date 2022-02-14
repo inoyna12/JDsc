@@ -2,19 +2,13 @@
 包含开卡脚本(豆子多一点):
 
 ```
-ql repo https://github.com.cnpmjs.org/inoyna12/JDsc.git "jd_|jx_|kk_|getJDCookie" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
-```
-
-不包含开卡脚本:
-
-```
-ql repo https://github.com.cnpmjs.org/inoyna12/JDsc.git "jd_|jx_|getJDCookie" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
+ql repo https://github.com/inoyna12/JDsc.git "jd_|jx_|kk_" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
 ```
 
 Termux专用拉库命令:
 
 ```
-ql repo https://github.com.cnpmjs.org/inoyna12/JDsc.git "jd_|jx_|kk_|pp_|getJDCookie" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
+ql repo https://github.com/inoyna12/JDsc.git "jd_|jx_|kk_|pp_" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
 ```
 
 定时规则`0 */4 * * *`
