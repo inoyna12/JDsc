@@ -63,7 +63,7 @@ let allMessage = '';
     return;
   }
   await requireConfig()
-  $.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/jd_updateCash.json')
+  $.authorCode = await getAuthorShareCode('http://cdn.boledao.com/shareCodes/jd_upd1ateCash.json')
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -449,8 +449,13 @@ function getSign(functionId, body) {
       "client":"apple",
       "clientVersion":"10.3.0"
     }
+    let Host = ""
     let HostArr = ['jdsign.cf', 'signer.nz.lu']
-    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
+    if (process.env.SIGN_URL) {
+      Host = process.env.SIGN_URL
+    } else {
+      Host = HostArr[Math.floor((Math.random() * HostArr.length))]
+    }
     let options = {
       url: `https://cdn.nz.lu/ddo`,
       body: JSON.stringify(data),
