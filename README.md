@@ -1,5 +1,5 @@
 ### 青龙拉库命令:
-包含开卡脚本(豆子多一点):
+包含开卡脚本:
 
 ```
 ql repo https://github.com/inoyna12/JDsc.git "jd_|jx_|kk_" "activity|backUp" "^jd[^_]|USER|sendNotify|JD_DailyBonus|utils|function|ql"
