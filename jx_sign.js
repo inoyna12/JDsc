@@ -59,7 +59,7 @@ if ($.isNode()) {
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
       $.isLogin = true;
-      UA = `jdpingou;iPhone;5.18.0;14.6;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100826;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
+      UA = `jdpingou;iPhone;5.22.2;14.6;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100880;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
       UAInfo[$.UserName] = UA
       if (isLoginInfo[$.UserName] === false) {
       
@@ -201,10 +201,13 @@ async function main(help = true) {
 
 // 查询信息
 function signhb(type = 1) {
-  let body = '';
-  if ($.signhb_source === '5') body = `type=0&signhb_source=${$.signhb_source}&smp=&ispp=1&tk=`
+  let functionId = 'signhb/query', body = '';
+  if ($.signhb_source === '5') {
+    functionId = 'signhb/query_jxpp'
+    body = `type=0&signhb_source=${$.signhb_source}&smp=&ispp=1&tk=`
+  }
   return new Promise((resolve) => {
-    $.get(taskUrl("signhb/query", body), async (err, resp, data) => {
+    $.get(taskUrl(functionId, body), async (err, resp, data) => {
       try {
         if (err) {
           console.log(JSON.stringify(err));
@@ -285,8 +288,16 @@ function signhb(type = 1) {
 
 // 签到 助力
 function helpSignhb(smp = '') {
+  let functionId, body;
+  if ($.signhb_source === '5') {
+    functionId = 'signhb/query_jxpp'
+    body = `type=1&signhb_source=${$.signhb_source}&smp=&ispp=1&tk=`
+  } else {
+    functionId = 'signhb/query'
+    body = `type=1&signhb_source=${$.signhb_source}&smp=${smp}&ispp=0&tk=`
+  }
   return new Promise((resolve) => {
-    $.get(taskUrl("signhb/query", `type=1&signhb_source=${$.signhb_source}&smp=${smp}&ispp=1&tk=`), async (err, resp, data) => {
+    $.get(taskUrl(functionId, body), async (err, resp, data) => {
       try {
         if (err) {
           console.log(JSON.stringify(err))
@@ -319,14 +330,16 @@ function helpSignhb(smp = '') {
 
 // 任务
 function dotask(task) {
-  let body;
+  let functionId, body;
   if ($.signhb_source === '5') {
+    functionId = 'signhb/dotask_jxpp'
     body = `task=${task}&signhb_source=${$.signhb_source}&ispp=1&sqactive=${$.sqactive}&tk=`
   } else {
-    body = `task=${task}&signhb_source=${$.signhb_source}&ispp=1&tk=`
+    functionId = 'signhb/dotask'
+    body = `task=${task}&signhb_source=${$.signhb_source}&ispp=0&sqactive=&tk=`
   }
   return new Promise((resolve) => {
-    $.get(taskUrl("signhb/dotask", body), async (err, resp, data) => {
+    $.get(taskUrl(functionId, body), async (err, resp, data) => {
         try {
           if (err) {
             console.log(JSON.stringify(err));
@@ -357,7 +370,7 @@ function bxdraw() {
   if ($.signhb_source === '5') {
     body = `ispp=1&sqactive=${$.sqactive}&tk=`
   } else {
-    body = `ispp=1&tk=`
+    body = `ispp=0&sqactive=&tk=`
   }
   return new Promise((resolve) => {
     $.get(taskUrl("signhb/bxdraw", body), async (err, resp, data) => {
