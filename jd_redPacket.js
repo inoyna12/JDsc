@@ -38,15 +38,9 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  let res = await getAuthorShareCode('https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/jd_red.json')
+  let res = await getAuthorShareCode('https://raw.githubusercontent.com/DX3242/updateTeam/master/shareCodes/jd_red.json')
   if (!res) { 
-    res = await getAuthorShareCode('https://ghproxy.inoyna12.workers.dev/https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/jd_red.json') 
-    if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/inoyna12/updateTeam@master/shareCodes/jd_red.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-    await $.wait(1000)
-    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/inoyna22/updateTeam@master/shareCodes/jd_red.json')
-   }
-  }
+    res = await getAuthorShareCode('https://ghproxy.zfeng1005.workers.dev/https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/jd_red.json') 
   $.authorMyShareIds = [...(res || [])];
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
