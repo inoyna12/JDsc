@@ -38,7 +38,6 @@ $.result = [];
 $.shareCodes = [];
 let cookiesArr = [], cookie = '', token = '';
 let UA, UAInfo = {};
-let nowTimes;
 const randomCount = $.isNode() ? 3 : 3;
 $.appId = "92a36";
 if ($.isNode()) {
@@ -65,7 +64,7 @@ if ($.isNode()) {
       $.index = i + 1;
       $.nickName = '';
       $.isLogin = true;
-      UA = `jdpingou;iPhone;5.9.0;14.6;${randomString(40)};network/wifi;model/iPhone12,1;appBuild/100739;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/1;pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
+      UA = `jdpingou;iPhone;5.20.6;14.6;${randomString(40)};network/wifi;model/iPhone8,1;appBuild/100858;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/1;pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
       UAInfo[$.UserName] = UA
       await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
@@ -116,7 +115,6 @@ if ($.isNode()) {
 
 async function cfd() {
   try {
-    nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000)
     let beginInfo = await getUserInfo();
     if (beginInfo.LeadInfo.dwLeadType === 2) {
       console.log(`还未开通活动，尝试初始化`)
@@ -129,6 +127,10 @@ async function cfd() {
         console.log(`初始化失败\n`)
         return
       }
+    }
+
+    if (!beginInfo.MarkList.daily_task_win) {
+      await setMark()
     }
 
     //抽奖
@@ -461,6 +463,25 @@ function getAuthorShareCode(url) {
   })
 }
 
+function setMark() {
+  return new Promise(resolve => {
+    $.get(taskUrl("user/SetMark", `strMark=daily_task_win&strValue=1&dwType=1`), (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`);
+          console.log(`${$.name} SetMark API请求失败，请检查网路重试`);
+        } else {
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally{
+        resolve();
+      }
+    })
+  })
+}
+
 // 获取用户信息
 function getUserInfo(showInvite = true) {
   return new Promise(async (resolve) => {
@@ -479,6 +500,7 @@ function getUserInfo(showInvite = true) {
             dwLandLvl,
             LeadInfo = {},
             Business = {},
+            MarkList = {}
           } = data;
           if (showInvite) {
             console.log(`获取用户信息：${sErrMsg}\n${$.showLog ? data : ""}`);
@@ -496,12 +518,14 @@ function getUserInfo(showInvite = true) {
             strMyShareId,
             dwLandLvl,
             LeadInfo,
+            MarkList
           };
           resolve({
             ddwRichBalance,
             ddwCoinBalance,
             strMyShareId,
             LeadInfo,
+            MarkList
           });
         }
       } catch (e) {
@@ -769,7 +793,7 @@ async function requestAlgo() {
       'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
     },
     'body': JSON.stringify({
-      "version": "3.0",
+      "version": "3.1",
       "fp": $.fingerprint,
       "appId": $.appId.toString(),
       "timestamp": Date.now(),
