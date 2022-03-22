@@ -1,6 +1,6 @@
 """
 cron: 50 59 * * * *
-new Env('财富岛兑换100红包');
+new Env('财富岛兑换红包');
 """
 import os
 import re
@@ -8,29 +8,36 @@ import time
 import json
 import datetime
 import requests
+from requests import RequestException
 from utils.ql_util import get_random_str
 from utils.ql_api import get_envs, disable_env, post_envs, put_envs
 
-# 默认配置(看不懂代码也勿动)
-cfd_start_time = -0.15
-cfd_offset_time = 0.01
+#获取最新的cfd100元链接
+class JxCFD(object):
+    def __init__(self, cookie):
+        self.cookie = cookie
+        self.session = requests.session()
+        self.session.headers = {
+            "Host": "m.jingxi.com",
+            "Accept": "*/*",
+            "Connection": "keep-alive",
+            'referer': 'https://st.jingxi.com/fortune_island/index2.html?ptag=7155.9.47&sceneval=2&sid=6f488e2778fa2db09a39f105577da07w',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36 Edg/96.0.1054.62',
+            'cookie': self.cookie,
+            "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br"
+        }
 
-# 基础配置勿动
-cfd_url = "https://m.jingxi.com/jxbfd/user/ExchangePrize?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=7&_cfd_t=1641614898584&ptag=7155.9.47&dwType=3&dwLvl=21&ddwPaperMoney=100000&strPoolName=jxcfd2_exchange_hb_202112&strPgtimestamp=1641614898555&strPhoneID=dc4d66cd003258f6&strPgUUNum=5fa8768882894a729d9e53fe5fe26a7d&_stk=_cfd_t%2CbizCode%2CddwPaperMoney%2CdwEnv%2CdwLvl%2CdwType%2Cptag%2Csource%2CstrPgUUNum%2CstrPgtimestamp%2CstrPhoneID%2CstrPoolName%2CstrZone&_ste=1&h5st=20220108120818585%3B8889163875261098%3B92a36%3Btk02wa2721bec18n%2FMI5ojCkzgBPddDoPODEuX8pwgEf0DYlWN88%2BpqkGaYFctlRmY8hbQNmOKUE4hAJScCuLL2aK4mr%3B98b62cea3221af87c34307c27f62ed654f481658279e12011d62d8030cfb4bd8%3B3.0%3B1641614898585&_=1641614898586&sceneval=2&g_login_type=1&callback=jsonpCBKJ&g_ty=ls"
+    def get_cfd_url(self):
+        url = 'https://m.jingxi.com/jxbfd/user/ExchangeState?strZone=jxbfd&dwType=2&sceneval=2&g_login_type=1'
+        ret = self.session.get(url).json()
+        dwLvl = ret['hongbao'][0]['dwLvl']
+        pool = ret['hongbaopool']
+        new_url = f'https://m.jingxi.com/jxbfd/user/ExchangePrize?strZone=jxbfd&dwType=3&dwLvl={dwLvl}&ddwPaperMoney=100000&strPoolName={pool}&sceneval=2&g_login_type=1'
+        return new_url
+
 pattern_pin = re.compile(r'pt_pin=([\w\W]*?);')
 pattern_data = re.compile(r'\(([\w\W]*?)\)')
-
-
-# 获取下个整点和时间戳
-def get_date() -> str and int:
-    # 当前时间
-    now_time = datetime.datetime.now()
-    # 把根据当前时间计算下一个整点时间戳
-    integer_time = (now_time + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:00:00")
-    time_array = time.strptime(integer_time, "%Y-%m-%d %H:%M:%S")
-    time_stamp = int(time.mktime(time_array))
-    return integer_time, time_stamp
-
 
 # 获取要执行兑换的cookie
 def get_cookie():
@@ -50,6 +57,30 @@ def get_cookie():
     else:
         print('共配置{}条CK,请添加环境变量,或查看环境变量状态'.format(len(ck_list)))
     return pin, cookie
+
+# 默认配置(看不懂代码也勿动)
+cfd_start_time = -0.15
+cfd_offset_time = 0.01
+
+# 基础配置勿动
+# 获取cookie等参数
+u_pin, u_cookie = get_cookie()
+cfd_url=JxCFD(u_cookie['value']).get_cfd_url()
+
+
+
+# 获取下个整点和时间戳
+def get_date() -> str and int:
+    # 当前时间
+    now_time = datetime.datetime.now()
+    # 把根据当前时间计算下一个整点时间戳
+    integer_time = (now_time + datetime.timedelta(hours=1)).strftime("%Y-%m-%d %H:00:00")
+    time_array = time.strptime(integer_time, "%Y-%m-%d %H:%M:%S")
+    time_stamp = int(time.mktime(time_array))
+    return integer_time, time_stamp
+
+
+
 
 
 # 获取配置参数
@@ -78,12 +109,8 @@ def cfd_qq(def_start_time):
     # 记录请求时间,发送请求
     t1 = time.time()
     d1 = datetime.datetime.now().strftime("%H:%M:%S.%f")
-    res = requests.get(cfd_url, headers=headers)
+    data = requests.get(cfd_url, headers=headers).json()
     t2 = time.time()
-    # 正则对结果进行提取
-    re_list = pattern_data.search(res.text)
-    # 进行json转换
-    data = json.loads(re_list.group(1))
     msg = data['sErrMsg']
     # 根据返回值判断
     if data['iRet'] == 0:
@@ -116,10 +143,6 @@ def cfd_qq(def_start_time):
 if __name__ == '__main__':
     print("- 程序初始化")
     print("脚本进入时间[{}]".format(datetime.datetime.now().strftime("%H:%M:%S.%f")))
-    # 从环境变量获取url,不存在则从配置获取
-    u_url = os.getenv("CFD_URL", cfd_url)
-    # 获取cookie等参数
-    u_pin, u_cookie = get_cookie()
     # 获取时间等参数
     u_start_time, u_start_dist = get_config()
     # 预计下个整点为
