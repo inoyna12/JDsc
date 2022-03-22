@@ -1,5 +1,5 @@
 /* 
-cron 1 10 * * * https://raw.githubusercontent.com/smiek2121/scripts/master/jd_sign_graphics.js
+cron 14 10 * * * https://raw.githubusercontent.com/smiek2121/scripts/master/jd_sign_graphics.js
 
 */
 
@@ -50,6 +50,7 @@ const turnTableId = [
   { "name": "京东商城-母婴", "id": 458, "url": "https://prodev.m.jd.com/mall/active/3BbAVGQPDd6vTyHYjmAutXrKAos6/index.html" },
   { "name": "京东商城-数码", "id": 347, "url": "https://prodev.m.jd.com/mall/active/4SWjnZSCTHPYjE5T7j35rxxuMTb6/index.html" },
   { "name": "PLUS会员定制", "id": 1265, "url": "https://prodev.m.jd.com/mall/active/N9MpLQdxZgiczZaMx2SzmSfZSvF/index.html" },
+  {"name": "连续签到", "id": 1345, "url": "https://sendbeans.jd.com/jump/index/#/taro/pages/turncard/index?turnTableId=1345&shopId=1000000142" },
   // { "name": "京东商城-童装", "id": 511, "url": "https://prodev.m.jd.com/mall/active/3Af6mZNcf5m795T8dtDVfDwWVNhJ/index.html" },
   // { "name": "京东商城-内衣", "id": 1071, "url": "https://prodev.m.jd.com/mall/active/4PgpL1xqPSW1sVXCJ3xopDbB1f69/index.html" },
   // { "name": "京东超市", "id": 1204, "url": "https://pro.m.jd.com/mall/active/QPwDgLSops2bcsYqQ57hENGrjgj/index.html" },
