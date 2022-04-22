@@ -1,4 +1,4 @@
-l/*
+/*
 签到领现金，每日2毛～5毛
 可互助，助力码每日不变，只变日期
 活动入口：京东APP搜索领现金进入
@@ -282,7 +282,7 @@ function getSignfromPanda(functionId, body) {
     }
     return new Promise((resolve) => {
         let url = {
-            url: "https://api.jds.codes/jd/sign",
+            url: "https://api.zhezhe.cf/jd/sign",
             body: JSON.stringify(data),
 		    followRedirect: false,
 		    headers: {
