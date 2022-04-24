@@ -3,7 +3,7 @@ import time
 
 import requests
 
-ql_auth_path = '/ql/data/config/auth.json'
+ql_auth_path = '/ql/config/auth.json'
 # ql_auth_path = r'D:\Docker\ql\config\auth.json'
 ql_url = 'http://localhost:5600'
 
