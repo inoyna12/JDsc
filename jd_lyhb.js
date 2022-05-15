@@ -1,12 +1,12 @@
 /*
 锦鲤红包任务
 入口：[京东App领券频道]
-20 * * * * jd_lyhb.js
+20 2,19 * * * jd_lyhb.js
 ============Sami===============
 1、由于签名限制,每次互助都要获取签名,如果担心风险,请禁用该脚本。
 */
 
-const $ = new Env("Sami锦鲤红包任务")
+const $ = new Env("锦鲤红包任务")
 const Ver = '20220330';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
