@@ -1,14 +1,14 @@
 /*
 锦鲤红包互助
 入口：[京东App领券频道]
-2 * * * * jd_lyhb_help.js
+2 4,13,19 * * * jd_lyhb_help.js
 仅内部互助
 ============Sami===============
 1、由于签名限制,每次互助都要获取签名,如果担心风险,请禁用该脚本。
 2、新版本的锦鲤红包增加了同账号助力限制,超过2次后就会报火爆，脚本增加了次数检测限制。
 */
 
-const $ = new Env("Sami锦鲤红包互助")
+const $ = new Env("锦鲤红包互助")
 const Ver = '20220401';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
