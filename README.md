@@ -57,11 +57,7 @@ docker exec -it qinglong bash -c "pip3 install requests"
 
 ___
 
-### 手机运行:
 
-termux安装青龙面板(2.10.13)，无需root。[点击查看](/backUp/termux_ql.md)
-
-___
 
 [青龙面板JD脚本互助文件](/backUp/code.md)
 
