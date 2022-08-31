@@ -369,6 +369,7 @@ if(DisableIndex!=-1){
 			$.YunFeiQuanEndTime2 = "";
 			$.JoyRunningAmount = "";
 			$.ECardinfo = "";
+			$.PlustotalScore=0;
 			TempBaipiao = "";
 			strGuoqi="";
 			console.log(`******开始查询【京东账号${$.index}】${$.nickName || $.UserName}*********`);
@@ -405,7 +406,8 @@ if(DisableIndex!=-1){
 		         GetJxBeaninfo(), //喜豆查询
 		         GetPigPetInfo(), //金融养猪
 				 GetJoyRuninginfo(), //汪汪赛跑 
-				 CheckEcard() //E卡查询
+				 CheckEcard(), //E卡查询
+				 queryScores()
 		     ])
 			
 			await showMsg();
@@ -652,8 +654,11 @@ async function showMsg() {
 			if ($.levelName == "铜牌")
 				$.levelName = `🥉铜牌`;
 
-			if ($.isPlusVip == 1)
+			if ($.isPlusVip == 1){
 				ReturnMessage += `${$.levelName}Plus`;
+				if($.PlustotalScore)
+					ReturnMessage+=`(${$.PlustotalScore}分)`
+			}
 			else
 				ReturnMessage += `${$.levelName}会员`;
 		}
@@ -719,20 +724,24 @@ async function showMsg() {
 			strsummary += `【当前京豆】${$.beanCount-$.beanChangeXi}豆(≈${(($.beanCount-$.beanChangeXi)/ 100).toFixed(2)}元)\n`;
 		}			
 	}
-	
+
 	if (EnableJxBeans) {
-		ReturnMessage += `【今日喜豆】收${$.todayinJxBean}豆`;		
-		if ($.todayOutJxBean != 0) {
-			ReturnMessage += `,支${$.todayOutJxBean}豆`;			
-		}
-		ReturnMessage += `\n`;		
-		ReturnMessage += `【昨日喜豆】收${$.inJxBean}豆`;		
-		if ($.OutJxBean != 0) {
-			ReturnMessage += `,支${$.OutJxBean}豆`;			
-		}
-		ReturnMessage += `\n`;		
-		ReturnMessage += `【当前喜豆】${$.xibeanCount}喜豆(≈${($.xibeanCount/ 100).toFixed(2)}元)\n`;
-		strsummary += `【当前喜豆】${$.xibeanCount}豆(≈${($.xibeanCount/ 100).toFixed(2)}元)\n`;
+	    if ($.todayinJxBean || $.todayOutJxBean) {
+	        ReturnMessage += `【今日喜豆】收${$.todayinJxBean}豆`;
+	        if ($.todayOutJxBean != 0) {
+	            ReturnMessage += `,支${$.todayOutJxBean}豆`;
+	        }
+	        ReturnMessage += `\n`;
+	    }
+	    if ($.inJxBean || $.OutJxBean) {
+	        ReturnMessage += `【昨日喜豆】收${$.inJxBean}豆`;
+	        if ($.OutJxBean != 0) {
+	            ReturnMessage += `,支${$.OutJxBean}豆`;
+	        }
+			ReturnMessage += `\n`;
+	    }	    
+	    ReturnMessage += `【当前喜豆】${$.xibeanCount}喜豆(≈${($.xibeanCount/ 100).toFixed(2)}元)\n`;
+	    strsummary += `【当前喜豆】${$.xibeanCount}豆(≈${($.xibeanCount/ 100).toFixed(2)}元)\n`;
 	}
 
 
@@ -1048,9 +1057,9 @@ async function bean() {
 	            if (detailList && detailList.length > 0) {
 	                for (let item of detailList) {
 	                    const date = item.date.replace(/-/g, '/') + "+08:00";
-	                    if (new Date(date).getTime() >= tm1 && (!item['eventMassage'].includes("退还") && !item['eventMassage'].includes('扣赠'))) {
+	                    if (new Date(date).getTime() >= tm1 && (!item['eventMassage'].includes("退还") && !item['eventMassage'].includes("物流") && !item['eventMassage'].includes('扣赠'))) {
 	                        todayArr.push(item);
-	                    } else if (tm <= new Date(date).getTime() && new Date(date).getTime() < tm1 && (!item['eventMassage'].includes("退还") && !item['eventMassage'].includes('扣赠'))) {
+	                    } else if (tm <= new Date(date).getTime() && new Date(date).getTime() < tm1 && (!item['eventMassage'].includes("退还") && !item['eventMassage'].includes("物流") && !item['eventMassage'].includes('扣赠'))) {
 	                        //昨日的
 	                        yesterdayArr.push(item);
 	                    } else if (tm > new Date(date).getTime()) {
@@ -1695,7 +1704,7 @@ function getCoupon() {
             url: `https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state=1&wxadd=1&filterswitch=1&_=${Date.now()}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls`,
             headers: {
                 'authority': 'wq.jd.com',
-                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+                "User-Agent": "jdapp;iPhone;10.1.2;15.0;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
                 'accept': '*/*',
                 'referer': 'https://wqs.jd.com/',
                 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
@@ -1704,7 +1713,7 @@ function getCoupon() {
 			timeout: 10000
         }
         $.get(options, async(err, resp, data) => {
-            try {
+            try {				
                 data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);
                 let couponTitle = '';
                 let couponId = '';
@@ -2916,6 +2925,32 @@ function GetDateTime(date) {
 		timeString += date.getSeconds();
 
 	return timeString;
+}
+
+async function queryScores() {
+	if ($.isPlusVip != 1)
+		return
+    let res = ''
+    let url = {
+      url: `https://rsp.jd.com/windControl/queryScore/v1?lt=m&an=plus.mobile&stamp=${Date.now()}`,
+      headers: {
+        'Cookie': cookie,
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045715 Mobile Safari/537.36',
+        'Referer': 'https://plus.m.jd.com/rights/windControl'
+      }
+    };
+	
+    $.get(url, async (err, resp, data) => {
+      try {
+        const result = JSON.parse(data)
+        if (result.code == 1000) {
+		  $.PlustotalScore=result.rs.userSynthesizeScore.totalScore;
+        } 
+      } catch (e) {
+        $.logErr(e, resp);
+      }
+    })
+  
 }
 
 // prettier-ignore
