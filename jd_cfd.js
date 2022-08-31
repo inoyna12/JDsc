@@ -83,7 +83,7 @@ if ($.isNode()) {
       await $.wait(2000);
     }
   }
-  let res = await getAuthorShareCode('https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/cfd.json')
+  /*let res = await getAuthorShareCode('https://raw.githubusercontent.com/inoyna12/updateTeam/master/shareCodes/cfd.json')
   $.strMyShareIds = [...(res && res.shareId || [])]
   await shareCodesFormat()
   for (let i = 0; i < cookiesArr.length; i++) {
@@ -107,7 +107,7 @@ if ($.isNode()) {
     } else {
       break
     }
-  }
+  }*/
   await showMsg();
 })()
     .catch((e) => $.logErr(e))
@@ -164,8 +164,8 @@ async function cfd() {
     }
 
     //助力奖励
-    await $.wait(2000)
-    await getTakeAggrPage('helpdraw')
+    //await $.wait(2000)
+    //await getTakeAggrPage('helpdraw')
 
     console.log('')
     //卖贝壳
@@ -1169,7 +1169,7 @@ function getUserInfo(showInvite = true) {
             console.log(`财富岛好友互助码每次运行都变化,旧的当天有效`);
             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}`);
             $.shareCodes.push(strMyShareId)
-            await uploadShareCode(strMyShareId)
+            //await uploadShareCode(strMyShareId)
           }
           $.info = {
             ...$.info,
