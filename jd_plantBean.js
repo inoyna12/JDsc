@@ -8,6 +8,8 @@
 互助码shareCode请先手动运行脚本查看打印可看到
 每个京东账号每天只能帮助3个人。多出的助力码将会助力失败。
 
+// zero205：已添加自己账号内部互助，有剩余助力次数再帮我助力
+
 =====================================Quantumult X=================================
 [task_local]
 1 7-21/2 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_plantBean.js, tag=种豆得豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzd.png, enabled=true
@@ -35,8 +37,11 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
 let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好友的shareCode
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
-  '4npkonnsy7xi2wom5glmwew2eniryedrts6cw2i@u72q4vdn3zes2czitxesaunfswksyp7ty4eawgy',
+  'mlrdw3aw26j3xc6xycqtc74umufg2kphl3yfaxy@4npkonnsy7xi3ii7u6y52byc4urucexhl2wh2pq@olmijoxgmjutydymkyc56wollvia4yorekjt5ky@q7knrx5fitalyburqkflsm4jjq3h7wlwy7o5jii@4npkonnsy7xi2dkkbvl643342m5of4rpapky3ha@u72q4vdn3zes3byfckc62jqcbkxq3wtymnzrz2i@e7lhibzb3zek3ziaj5fstdr2qbxofrnt63pxzpq@fn5sjpg5zdejmpxw4mttxyyppqmy3t6eveppesy@hjkb2bbfm2bdr7lxto2hvcagyq3h7wlwy7o5jii',
+  //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
+  'mlrdw3aw26j3xc6xycqtc74umufg2kphl3yfaxy@4npkonnsy7xi3ii7u6y52byc4urucexhl2wh2pq@olmijoxgmjutydymkyc56wollvia4yorekjt5ky@q7knrx5fitalyburqkflsm4jjq3h7wlwy7o5jii@4npkonnsy7xi2dkkbvl643342m5of4rpapky3ha@u72q4vdn3zes3byfckc62jqcbkxq3wtymnzrz2i@e7lhibzb3zek3ziaj5fstdr2qbxofrnt63pxzpq@fn5sjpg5zdejmpxw4mttxyyppqmy3t6eveppesy@hjkb2bbfm2bdr7lxto2hvcagyq3h7wlwy7o5jii',
 ]
+const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
 let allMessage = ``;
 let currentRoundId = null;//本期活动id
 let lastRoundId = null;//上期id
@@ -46,6 +51,9 @@ let randomCount = $.isNode() ? 20 : 5;
 let num;
 $.newShareCode = [];
 !(async () => {
+  if (!process.env.JD_JOIN_ZLC) {
+    console.log(`【注意】本脚本默认会给助力池进行助力！\n如需加入助力池请添加TG群：https://t.me/jd_zero_205\n如不加入助力池互助，可添加变量名称：JD_JOIN_ZLC，变量值：false\n`)
+  }
   await requireConfig();
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -409,7 +417,7 @@ function showTaskProcess() {
 //助力好友
 async function doHelp() {
   if ($.isNode() && !process.env.PLANT_BEAN_SHARECODES) {
-    console.log(`您未填写助力码变量，开始账号内互助，再帮作者助力`);
+    console.log(`您未填写助力码变量，开始账号内互助，再帮【zero205】助力`);
     $.newShareCode = [...(jdPlantBeanShareArr || []), ...(newShareCodes || [])]
   } else {
     $.newShareCode = newShareCodes
@@ -557,7 +565,7 @@ async function plantBeanIndex() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `https://123456transfer.nz.lu/bean`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://transfer.nz.lu/bean`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -589,6 +597,9 @@ function shareCodesFormat() {
       // console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
       const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
       newShareCodes = shareCodes[tempIndex].split('@');
+    }
+    if (!ZLC) {
+      console.log(`您设置了不加入助力池，跳过\n`)
     } else {
       const readShareCodeRes = await readShareCode();
       if (readShareCodeRes && readShareCodeRes.code === 200) {
