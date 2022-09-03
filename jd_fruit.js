@@ -1407,7 +1407,7 @@ function shareCodesFormat() {
       console.log(`您未填写助力码变量，优先进行账号内互助，再帮作者助力`);
       newShareCodes = [...(jdFruitShareArr || []), ...(newShareCodes || [])]
     } else {
-      const readShareCodeRes = await readShareCode();
+      const readShareCodeRes = null;
       if (readShareCodeRes && readShareCodeRes.code === 200) {
         newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
       }
