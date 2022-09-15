@@ -41,7 +41,7 @@ const JD_API_HOST = 'https://api.m.jd.com/', actCode = 'visa-card-001';
       $.isLogin = true;
       $.nickName = '';
       message = '';
-      await TotalBean();
+//      await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -685,8 +685,8 @@ function invite2() {
 function invite() {
   let t = +new Date()
   let inviterIdArr = [
-    "Pj9PqVWuUzCEm7gt2eXdjC8hpNWAA6hz9OmxlR/srEw=",
-    "M419FwNhHS3VVWYbwjo6Gw=="
+    "Pj9PqVWuUzCEm7gt2eXdjC8hpNWAA6hz9OmxlR/srEw="
+//    "M419FwNhHS3VVWYbwjo6Gw=="
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {
