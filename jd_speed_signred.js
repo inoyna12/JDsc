@@ -1,7 +1,7 @@
 /*
 京东极速版签到红包
 自动提现微信现金
-15 5,19 * * * jd_speed_signred.js
+15 18 * * * jd_speed_signred.js
 
 */
 const $ = new Env('京东极速版红包');
