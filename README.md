@@ -64,3 +64,7 @@ ___
 [青龙面板常用指令](/backUp/zhiling_ql.md)
 
 [环境变量合集](/backUp/githubAction.md)
+
+### 访问量
+
+![](https://profile-counter.glitch.me/inoyna12/count.svg)
