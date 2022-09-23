@@ -20,7 +20,7 @@
 | NodeJS   | Python3  |
 | -------- | -------- |
 | png-js   | requests |
-| ts-md5   |          |
+| ts-md5   |  ntplib  |
 | axios    |          |
 | jsdom    |          |
 | date-fns |          |
