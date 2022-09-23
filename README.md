@@ -7,7 +7,9 @@
 `ql repo https://github.com/inoyna12/JDsc.git "jd_|jx_" "backUp" "^jd[^_]|USER|sendNotify|utils|function"`
 
 **新版青龙订阅管理**
+
 | 链接 | https://github.com/inoyna12/JDsc.git  |
+| ------ | :--- |
 | 白名单 | jd_\|jx_  |
 | **黑名单** | **backUp** |
 | **依赖文件** | **jd[^_]|utils|function|USER|sendNotify** |
