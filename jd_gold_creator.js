@@ -1,23 +1,8 @@
 /*
 金榜创造营
 活动入口：https://h5.m.jd.com/babelDiy/Zeus/2H5Ng86mUJLXToEo57qWkJkjFPxw/index.html
-活动时间：2021-05-21至2021-12-31
-脚本更新时间：2021-05-28 14:20
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-===================quantumultx================
-[task_local]
-#金榜创造营
-2 1,22 * * * jd_gold_creator.js, tag=金榜创造营, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
-=====================Loon================
-[Script]
-cron "2 1,22 * * *" script-path=jd_gold_creator.js, tag=金榜创造营
-
-====================Surge================
-金榜创造营 = type=cron,cronexp="2 1,22 * * *",wake-system=1,timeout=3600,script-path=jd_gold_creator.js
-
-============小火箭=========
-金榜创造营 = type=cron,script-path=jd_gold_creator.js, cronexpr="2 1,22 * * *", timeout=3600, enable=true
+定时随机~~~~
  */
 const $ = new Env('金榜创造营');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -25,22 +10,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
-const UA = `jdapp;iPhone;10.2.4;14.6;${randomWord(false,40,40)};network/wifi;JDEbook/openapp.jdreader;model/iPhone9,2;addressid/0;appBuild/167874;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16E158;supportJDSHWK/1`;
-function randomWord(randomFlag, min, max){
-  var str = "",
-    range = min,
-    arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
-  // 随机产生
-  if(randomFlag){
-    range = Math.round(Math.random() * (max-min)) + min;
-  }
-  for(var i=0; i<range; i++){
-    pos = Math.round(Math.random() * (arr.length-1));
-    str += arr[pos];
-  }
-  return str;
-}
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -69,7 +39,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
       $.beans = 0
       $.nickName = '';
       message = '';
-      await TotalBean();
+      //await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/`, {"open-url": "https://bean.m.jd.com/"});
@@ -82,6 +52,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         continue
       }
       await main()
+			await $.wait(3000);
     }
   }
 })()
@@ -94,8 +65,11 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 async function main() {
   try {
     await goldCreatorTab();//获取顶部主题
+		
     await getDetail();
+		await $.wait(1500);
     await goldCreatorPublish();
+		await $.wait(1500);
     await showMsg();
   } catch (e) {
     $.logErr(e)
@@ -115,7 +89,7 @@ async function getDetail() {
   for (let item of $.subTitleInfos) {
     console.log(`\n开始给【${item['longTitle']}】主题下的商品进行投票`);
     await goldCreatorDetail(item['matGrpId'], item['subTitleId'], item['taskId'], item['batchId']);
-    await $.wait(2000);
+    await $.wait(6000);
   }
 }
 function goldCreatorTab() {
@@ -214,6 +188,7 @@ async function doTask(subTitleId, taskId, batchId) {
     "type": 1,
     batchId
   };
+	await $.wait(2000);
   await goldCreatorDoTask(body);
 }
 async function doTask2(batchId) {
@@ -226,7 +201,7 @@ async function doTask2(batchId) {
         body['type'] = 2;
       }
       await goldCreatorDoTask(body);
-      await $.wait(2000);
+      await $.wait(4000);
     }
   }
   if ($.signTask['taskStatus'] === 1) {
@@ -304,7 +279,7 @@ function taskUrl(function_id, body = {}) {
       "Host": "api.m.jd.com",
       "Referer": "https://h5.m.jd.com/",
       "Cookie": cookie,
-      "User-Agent": UA
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
     }
   }
 }
@@ -318,7 +293,7 @@ function TotalBean() {
         Accept: "*/*",
         Connection: "keep-alive",
         Cookie: cookie,
-        "User-Agent": UA,
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
         "Accept-Language": "zh-cn",
         "Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
         "Accept-Encoding": "gzip, deflate, br"
