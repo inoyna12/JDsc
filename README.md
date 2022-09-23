@@ -8,7 +8,7 @@
 
 **新版青龙订阅管理**
 
-| 链接 | https://github.com/inoyna12/JDsc.git  |
+| 链接 | **https://github.com/inoyna12/JDsc.git**  |
 | ------ | :--- |
 | 白名单 | jd_\|jx_  |
 | **黑名单** | **backUp** |
