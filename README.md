@@ -10,9 +10,9 @@
 
 | 链接 | **https://github.com/inoyna12/JDsc.git**  |
 | ------ | :--- |
-| 白名单 | jd_\|jx_  |
+| 白名单 | **jd_\|jx_**  |
 | **黑名单** | **backUp** |
-| **依赖文件** | **jd[^_]|utils|function|USER|sendNotify** |
+| **依赖文件** | **^jd\[^_]\|USER\|utils\|function\|sendNotify** |
 | **文件后缀** | **js py ts** |
 
 **青龙依赖**
