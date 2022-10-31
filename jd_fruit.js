@@ -723,7 +723,7 @@ async function masterHelpShare() {
       continue
     }
     await masterHelp(code);
-    await $.wait(20000);
+    await $.wait(6000);
     if ($.helpResult.code === '0') {
       if ($.helpResult.helpResult.code === '0') {
         //助力成功

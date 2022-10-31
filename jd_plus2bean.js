@@ -1,9 +1,9 @@
 
 /*
-10 4 * * * jd_shangou.js
+9 9 * * * jd_plus2bean.js
  */
 
-const $ = new Env('闪购签到有礼');
+const $ = new Env('plus专属礼');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;
@@ -17,7 +17,6 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-const JD_API_HOST = 'https://api.m.jd.com/client.action';
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -30,7 +29,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
-      await TotalBean();
+      //await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -39,8 +38,8 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         }
         continue
       }
-      await shangou();
-	  await $.wait(1000)
+      await jingBeanReceive();
+	  await $.wait(2000)
     }
   }
 })()
@@ -53,43 +52,40 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 
 
 
-async function shangou() {
-  return new Promise(async (resolve) => {
-    $.get(taskUrl(), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`API请求失败，请检查网路重试`)
-        } else {
-             data = JSON.parse(data)
-             if (data.subCode == 0){
-               console.log(data.msg)
-               console.log(data.rewardsInfo?.successRewards[3][0]?.quantity||'空气')
-            }else{
-              console.log(data.msg)
+function jingBeanReceive() {
+    let opt = {
+        url: `https://api.m.jd.com/client.action?functionId=jingBeanReceive&body={"encryptAssignmentId":"6bzcu8ZNPHFhuWZC55MhLgJCPiW","firstType":-100,"plugin_version":90556}&clientVersion=11.0.2&client=android&ef=1&ep=%7B%22ts%22%3A1658155958775%2C%22ridx%22%3A-1%2C%22cipher%22%3A%7B%22uuid%22%3A%22EJc4ENY0CJLrYzLwDQZsZq%3D%3D%22%2C%22aid%22%3A%22EJc4ENY0CJLrYzLwDQZsZq%3D%3D%22%7D%2C%22ciphertype%22%3A5%2C%22version%22%3A%221.2.0%22%7D&st=1658155977625&sign=354bbcb59bdc53276a62fb21c9d1f3df&sv=110`,
+        headers: {
+            'Host': 'api.m.jd.com',
+            'accept-encoding': 'gzip,deflate',
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'User-Agent': 'okhttp/3.12.1;jdmall;android;version/11.0.2;build/97565;',
+            'Cookie': cookie
+        }
+    }
+    return new Promise(async (resolve) => {
+        $.post(opt, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`jingBeanReceive请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data)
+                    if (data.isSuccess) {
+                        console.log(data.data.windowsContent)
+                    } else {
+                        console.log('已领取过！')
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data)
             }
-          } 
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data)
-      }
+        })
     })
-  })
 }
 
-function taskUrl() {
-  return {
-    url: `https://api.m.jd.com/client.action?client=wh5&clientVersion=1.0.0&osVersion=15.1.1&networkType=wifi&functionId=doInteractiveAssignment&t=1640952130681&body={"itemId":"1","completionFlag":true,"encryptAssignmentId":"2mbhaGkggQQGGM3imR2o3BMqAbFH","encryptProjectId":"5wAnzYsAWyq94z4TQ6N2tjVKmeB","sourceCode":"aceshangou0608","lat":"0.000000","lng":"0.000000"}`,
-    headers: {
-      'Host': 'api.m.jd.com',
-      'accept':'application/json, text/plain, */*',
-      'Origin': 'https://prodev.m.jd.com',
-      'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-      'Cookie': cookie
-    }
-  }
-}
 
 function TotalBean() {
   return new Promise(async resolve => {
