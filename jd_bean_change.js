@@ -430,8 +430,14 @@ if(DisableIndex!=-1){
 		    $.UA = require('./USER_AGENTS').UARAM();
 			await TotalBean();			
 		    //await TotalBean2();
-			
 			if ($.beanCount == 0) {
+				console.log("数据获取失败，等待30秒后重试....")
+				await $.wait(30*1000);
+				await TotalBean();		
+			}
+			if ($.beanCount == 0) {
+				console.log("疑似获取失败,等待10秒后用第二个接口试试....")
+				await $.wait(10*1000);
 			    var userdata = await getuserinfo();
 			    if (userdata.code == 1) {
 			        $.beanCount = userdata.content.jdBean;
@@ -497,8 +503,8 @@ if(DisableIndex!=-1){
 			    TodayCache.push(tempAddCache);
 			}
 						
-			await getjdfruitinfo() //东东农场
-			await $.wait(5000);
+			await getjdfruitinfo(); //东东农场
+			await $.wait(1000);
 			
 			await Promise.all([
 			        getJoyBaseInfo(), //汪汪乐园
@@ -515,7 +521,7 @@ if(DisableIndex!=-1){
 			        GetJoyRuninginfo(), //汪汪赛跑
 			        queryScores()
 			    ])
-			await $.wait(5000);
+				
 			await showMsg();
 			if (intPerSent > 0) {
 				if ((i + 1) % intPerSent == 0) {
@@ -1462,7 +1468,7 @@ function TotalBean() {
                 "Connection": "keep-alive",
                 "Cookie": cookie,
                 "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
+                "User-Agent": $.UA
             }
         }
         $.post(options, (err, resp, data) => {
@@ -1587,38 +1593,38 @@ function isLoginByX1a0He() {
 }
 
 function getJingBeanBalanceDetail(page) {
-  return new Promise(async resolve => {
-    const options = {
+	return new Promise(async resolve => {
+		const options = {
       "url": `https://bean.m.jd.com/beanDetail/detail.json?page=${page}`,
       "body": `body=${escape(JSON.stringify({"pageSize": "20", "page": page.toString()}))}&appid=ld`,
-      "headers": {
-        'User-Agent': "Mozilla/5.0 (Linux; Android 12; SM-G9880) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36 EdgA/106.0.1370.47",       
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': cookie,
-      }
-    }
-    $.post(options, (err, resp, data) => {
-      try {
-        if (err) {
-          // console.log(`${JSON.stringify(err)}`)
-          // console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            // console.log(data)
-          } else {
-            // console.log(`京东服务器返回空数据`)
-          }
-        }
-      } catch (e) {
-        // $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
-  })
+			"headers": {
+				'User-Agent': $.UA,
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Cookie': cookie,
+			}
+		}
+		$.post(options, (err, resp, data) => {
+			try {
+				if (err) {
+					console.log(`${JSON.stringify(err)}`)
+					console.log(`getJingBeanBalanceDetail API请求失败，请检查网路重试`)
+				} else {
+					if (data) {
+						data = JSON.parse(data);
+						// console.log(data)
+					} else {
+						console.log(`京东服务器返回空数据`)
+					}
+				}
+			} catch (e) {
+				$.logErr(e, resp)
+			}
+			finally {
+				resolve(data);
+			}
+		})
+	})
 }
-
 function queryexpirejingdou() {
 	return new Promise(async resolve => {
 		const options = {
@@ -1709,6 +1715,7 @@ function getUUID(x = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", t = 0) {
     })
 }
 
+
 function redPacket() {
 	return new Promise(async resolve => {
 		const options = {
@@ -1741,16 +1748,17 @@ function redPacket() {
 						$.jxRedExpire = 0,
 						$.jsRedExpire = 0,
 						$.jdRedExpire = 0,
-						$.jdhRedExpire = 0,
+						$.jdhRedExpire = 0;
 						$.jdwxRedExpire = 0,
-						$.jdGeneralRedExpire = 0;
-
+						$.jdGeneralRedExpire = 0
+						
 						let t = new Date();
 						t.setDate(t.getDate() + 1);
 						t.setHours(0, 0, 0, 0);
 						t = parseInt((t - 1) / 1000);
+						//console.log(JSON.stringify(data.useRedInfo.redList))
 						for (let vo of data.useRedInfo.redList || []) {
-							if (vo.LimitStr && vo.LimitStr.includes("京喜")) {
+							if (vo.limitStr && vo.limitStr.includes("京喜")) {
 								$.jxRed += parseFloat(vo.balance)
 								if (vo['endTime'] === t) {
 									$.jxRedExpire += parseFloat(vo.balance)
@@ -1770,7 +1778,7 @@ function redPacket() {
 								if (vo['endTime'] === t) {
 									$.jsRedExpire += parseFloat(vo.balance)
 								}
-							} else if (vo.LimitStr && vo.LimitStr.includes("京东健康")) {
+							} else if (vo.limitStr && vo.limitStr.includes("京东健康")) {
 								$.jdhRed += parseFloat(vo.balance)
 								if (vo['endTime'] === t) {
 									$.jdhRedExpire += parseFloat(vo.balance)
@@ -1782,9 +1790,10 @@ function redPacket() {
 								}
 							}
 						}
+				
 						$.jxRed = $.jxRed.toFixed(2);
 						$.jsRed = $.jsRed.toFixed(2);
-						$.jdRed = $.jdRed.toFixed(2);
+						$.jdRed = $.jdRed.toFixed(2);						
 						$.jdhRed = $.jdhRed.toFixed(2);
 						$.jdwxRed = $.jdwxRed.toFixed(2);
 						$.jdGeneralRed = $.jdGeneralRed.toFixed(2);
@@ -1823,7 +1832,7 @@ function getCoupon() {
             url: `https://wq.jd.com/activeapi/queryjdcouponlistwithfinance?state=1&wxadd=1&filterswitch=1&_=${Date.now()}&sceneval=2&g_login_type=1&callback=jsonpCBKB&g_ty=ls`,
             headers: {
                 'authority': 'wq.jd.com',
-                "User-Agent": "jdapp;iPhone;10.1.2;15.0;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+                "User-Agent": $.UA,
                 'accept': '*/*',
                 'referer': 'https://wqs.jd.com/',
                 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
@@ -1845,7 +1854,7 @@ function getCoupon() {
 					//console.log(useable[i]);
                     if (useable[i].limitStr.indexOf('全品类') > -1) {
                         $.beginTime = useable[i].beginTime;
-                        if ($.beginTime < new Date().getTime() && useable[i].quota < 20 && useable[i].coupontype === 1) {                           
+                        if ($.beginTime < new Date().getTime() && useable[i].quota <= 100 && useable[i].coupontype === 1) {                           
 							//$.couponEndTime = new Date(parseInt(useable[i].endTime)).Format('yyyy-MM-dd');
                             $.couponName = useable[i].limitStr;
 							if (useable[i].platFormInfo) 
@@ -2050,9 +2059,14 @@ function jdfruitRequest(function_id, body = {}, timeout = 1000) {
 						console.log(`function_id:${function_id}`)
 						$.logErr(err);
 					} else {
-						if (safeGet(data)) {
+						if (safeGet(data)) {							
 							data = JSON.parse(data);
-							$.JDwaterEveryDayT = data.totalWaterTaskInit.totalWaterTaskTimes;
+							if (data.code=="400"){
+								console.log('东东农场: '+data.message);
+								llgeterror = true;
+							}
+							else
+								$.JDwaterEveryDayT = data.totalWaterTaskInit.totalWaterTaskTimes;
 						}
 					}
 				} catch (e) {
@@ -2075,7 +2089,10 @@ async function getjdfruitinfo() {
             "channel": 1,
             "babelChannel": "120"
         });
-
+		
+		if (llgeterror)
+			return
+		
         await getjdfruit();
         if (llgeterror) {
             console.log(`东东农场API查询失败,等待10秒后再次尝试...`)
@@ -3073,7 +3090,7 @@ async function queryScores() {
 }
 
 async function getuserinfo() {
-	var body={"pin": "$cooMrdGatewayUid$"};
+	var body=[{"pin": "$cooMrdGatewayUid$"}];
 	var ua = `jdapp;iPhone;${random(["11.1.0", "10.5.0", "10.3.6"])};${random(["13.5", "14.0", "15.0"])};${uuidRandom()};network/wifi;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone11,6;addressid/7565095847;supportBestPay/0;appBuild/167541;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`;
 
     let config = {
