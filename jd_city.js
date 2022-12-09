@@ -1,3 +1,10 @@
+/*
+城城领现金
+=================================Quantumultx=========================
+[task_local]
+#城城领现金
+0 0-23/2 * * * gua_city.js, tag=城城领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+ */
 const $ = new Env('城城领现金');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -18,7 +25,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let inviteCodes = ['-ryUXqoNbmZHYBeVS9PFpMG0dzOoaP7m']
+let inviteCodes = ['-ryUXqoNbmZHYBeVS9PFpMG0dzOoaP7m','-ryUAcVRLxM_HkOTFaKTu4ZudlXhk5o']
 $.shareCodesArr = [];
 
 !(async () => {
