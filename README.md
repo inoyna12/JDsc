@@ -1,6 +1,6 @@
 <div align="center"> <img src="https://visitor-badge.glitch.me/badge?page_id=inoyna12" /> </div>
 
-
+暂停更新
 
 **旧版青龙拉库代码**
 
