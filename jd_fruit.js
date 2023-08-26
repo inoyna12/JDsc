@@ -24,7 +24,10 @@ epxort FRUIT_DELAY = '1000',设置等待时间(毫秒)，默认请求5次接口�
 const $ = new Env('东东农场-任务');
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
 //助力好友分享码(最多3个,否则后面的助力失败),原因:京东农场每人每天只有3次助力机会
-let shareCodes = ['']
+let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
+  //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
+  '98de1693acf148db89c0cb651c2fef02@d456c8907c1443cdb93eec4d8f58bb65',
+]
 
 let message = '', subTitle = '', option = {}, isFruitFinished = false, ct = 0;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -48,6 +51,7 @@ $.reqnum = 1;
     if (process.env.DO_TEN_WATER_AGAIN) {
         allMessage = '【攒水滴模式已开启，每天只浇水10次！】\n\n';
     }
+    console.log('开始收集您的互助码，用于账号内部互助，请稍等...');
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -70,7 +74,7 @@ $.reqnum = 1;
             subTitle = '';
             option = {};
             $.UA = ua.UARAM ? ua.UARAM() : ua.USER_AGENT;
-            //await shareCodesFormat();
+            await shareCodesFormat();
             await jdFruit();
         }
     }
@@ -1355,24 +1359,27 @@ function readShareCode() {
     })
 }
 function shareCodesFormat() {
-    return new Promise(async resolve => {
-        // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-        newShareCodes = [];
-        if ($.shareCodesArr[$.index - 1]) {
-            newShareCodes = $.shareCodesArr[$.index - 1].split('@');
-        } else {
-            //console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-            const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-            newShareCodes = shareCodes[tempIndex].split('@');
-        }
-        const readShareCodeRes = null;
-        if (readShareCodeRes && readShareCodeRes.code === 200) {
-            //newShareCodes = newShareCodes.concat(readShareCodeRes.data || []);
-            newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
-        }
-        console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
-        resolve();
-    })
+  return new Promise(async resolve => {
+    console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
+    newShareCodes = [];
+    if ($.shareCodesArr[$.index - 1]) {
+      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+    } else {
+      const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
+      newShareCodes = shareCodes[tempIndex].split('@');
+    }
+    if ($.isNode() && !process.env.FRUITSHARECODES) {
+      console.log(`您未填写助力码变量，优先进行账号内互助，再帮作者助力`);
+      newShareCodes = [...(jdFruitShareArr || []), ...(newShareCodes || [])]
+    } else {
+      const readShareCodeRes = null;
+      if (readShareCodeRes && readShareCodeRes.code === 200) {
+        newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
+      }
+    }
+    console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
+    resolve();
+  })
 }
 function requireConfig() {
     return new Promise(resolve => {
