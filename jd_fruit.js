@@ -24,11 +24,11 @@ epxort FRUIT_DELAY = '1000',设置等待时间(毫秒)，默认请求5次接口�
 const $ = new Env('东东农场-任务');
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
 //助力好友分享码(最多3个,否则后面的助力失败),原因:京东农场每人每天只有3次助力机会
-let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
+//let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
-  '98de1693acf148db89c0cb651c2fef02@d456c8907c1443cdb93eec4d8f58bb65',
-]
-
+//  '98de1693acf148db89c0cb651c2fef02@d456c8907c1443cdb93eec4d8f58bb65',
+//]
+let shareCodes = []
 let message = '', subTitle = '', option = {}, isFruitFinished = false, ct = 0;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
