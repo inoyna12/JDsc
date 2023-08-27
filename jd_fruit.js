@@ -28,7 +28,7 @@ let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, n
   //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
 //  '98de1693acf148db89c0cb651c2fef02@d456c8907c1443cdb93eec4d8f58bb65',
 //]
-let shareCodes = []
+let shareCodes = ['']
 let message = '', subTitle = '', option = {}, isFruitFinished = false, ct = 0;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
